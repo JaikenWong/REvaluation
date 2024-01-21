@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.hongyu.revaluation.common.CommonConst;
+import com.hongyu.revaluation.entity.response.Result;
 import com.hongyu.revaluation.entity.session.LoginQuery;
 import com.hongyu.revaluation.entity.user.User;
 import com.hongyu.revaluation.mapper.UserMapper;
@@ -32,17 +33,17 @@ public class LoginManagementApi {
     private PasswordEncryptor passwordEncryptor;
 
     @PostMapping("/public/ui/api/login")
-    public ResponseEntity<String> login(@Valid @RequestBody LoginQuery query, HttpSession session) {
+    public ResponseEntity<Result> login(@Valid @RequestBody LoginQuery query, HttpSession session) {
         log.info("dashboard login username {}", query.getUserName());
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.eq("user_name", query.getUserName());
         User user = userMapper.selectOne(wrapper);
         passwordEncryptor.checkPassword(String.valueOf(query.getPassword()), user.getPassword());
         if (user == null) {
-            return ResponseEntity.badRequest().body("用户名密码错误");
+            return ResponseEntity.badRequest().body(Result.builder().code(1001).message("用户名密码错误").build());
         }
         setAttribute(session, user.getUserName(), user.getId());
-        return ResponseEntity.ok().body("success");
+        return ResponseEntity.ok().body(Result.builder().success(true).message("登录成功").build());
     }
 
     private void setAttribute(HttpSession session, String username, Long uid) {

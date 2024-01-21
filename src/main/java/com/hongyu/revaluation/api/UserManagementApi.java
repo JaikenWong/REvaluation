@@ -1,8 +1,10 @@
 package com.hongyu.revaluation.api;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Objects;
 
+import com.hongyu.revaluation.entity.response.Result;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.hongyu.revaluation.common.BadParamException;
 import com.hongyu.revaluation.entity.user.User;
 import com.hongyu.revaluation.entity.user.UserCreateInfo;
-import com.hongyu.revaluation.entity.user.UserEntity;
 import com.hongyu.revaluation.mapper.UserMapper;
 
 import jakarta.validation.Valid;
@@ -34,22 +35,25 @@ public class UserManagementApi {
     private PasswordEncryptor passwordEncryptor;
 
     @PostMapping(path = "/public/ui/api/user", produces = "application/json")
-    public ResponseEntity<UserEntity> createUser(@Valid @RequestBody UserCreateInfo userInfo) throws Exception {
+    public ResponseEntity<Result> createUser(@Valid @RequestBody UserCreateInfo userInfo) throws Exception {
         log.info("create user ");
         try {
             if (!Objects.deepEquals(userInfo.getPassword(), userInfo.getConfirmPasswd())) {
                 throw new BadParamException("用户密码和确认密码不同");
             }
             // 校验用户信息
-            String password = passwordEncryptor.encryptPassword(String.copyValueOf(userInfo.getPassword()));
+            String password = passwordEncryptor.encryptPassword(userInfo.getPassword());
             // 密码加密后存储
             User user = User.builder().userName(userInfo.getUserName()).password(password)
                 .createTime(System.currentTimeMillis()).build();
             userMapper.insert(user);
-            return ResponseEntity.ok(UserEntity.builder().userId(user.getId()).build());
+            return ResponseEntity.ok(Result.builder().success(true).message("注册成功").build());
         } finally {
             // 清理明文密码数组
-            Arrays.fill(userInfo.getPassword(), (char)0x00);
+            Field valueFieldOfString = String.class.getDeclaredField("value");
+            valueFieldOfString.setAccessible(true);
+            Arrays.fill((char[]) valueFieldOfString.get(userInfo.getPassword()), (char) 0x00);
+            Arrays.fill((char[]) valueFieldOfString.get(userInfo.getConfirmPasswd()), (char) 0x00);
         }
     }
 
