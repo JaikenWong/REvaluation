@@ -1,7 +1,5 @@
 package com.hongyu.revaluation.common;
 
-import lombok.Getter;
-
 /**
  * @author JaikenWong
  * @since 2024-01-21 10:03
