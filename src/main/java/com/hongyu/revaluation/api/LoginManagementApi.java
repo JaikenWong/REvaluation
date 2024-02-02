@@ -2,7 +2,6 @@ package com.hongyu.revaluation.api;
 
 import java.util.concurrent.TimeUnit;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -20,6 +19,7 @@ import com.hongyu.revaluation.entity.user.User;
 import com.hongyu.revaluation.mapper.UserMapper;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -68,15 +68,21 @@ public class LoginManagementApi {
         cookie.setPath("/");
         // add cookie to response
         response.addCookie(cookie);
-        redisTemplate.opsForValue().set(token, user.getId(), 30, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(token, user, 30, TimeUnit.MINUTES);
     }
 
     @GetMapping("/public/ui/api/logout")
     public ResponseEntity<Result> logout(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-        for(Cookie cookie : cookies) {
-            if (cookie.getName().equals("re-token")){
-                redisTemplate.delete(cookie.getValue());
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("re-token")) {
+                User user = (User)redisTemplate.opsForValue().getAndDelete(cookie.getValue());
+                if (user != null) {
+                    log.warn("delete current token by user {}", user.getUserName());
+                } else {
+                    log.error("current token is invalid");
+                    return ResponseEntity.badRequest().body(Result.builder().success(false).message("会话非法").build());
+                }
             }
         }
         return ResponseEntity.ok().body(Result.builder().success(true).message("登出成功").build());
