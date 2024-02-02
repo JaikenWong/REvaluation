@@ -61,7 +61,7 @@ public class LoginManagementApi {
     private void setSessionCookie(User user) {
         // 生成会话ID
         String token = JwtUtil.createToken(user);
-        Cookie cookie = new Cookie("evaluation-token", token);
+        Cookie cookie = new Cookie("re-token", token);
         cookie.setMaxAge(30 * 60 * 60); // 30 min
         cookie.setSecure(true);
         cookie.setHttpOnly(true);
@@ -75,7 +75,7 @@ public class LoginManagementApi {
     public ResponseEntity<Result> logout(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         for(Cookie cookie : cookies) {
-            if (cookie.getName().equals("evaluation-token")){
+            if (cookie.getName().equals("re-token")){
                 redisTemplate.delete(cookie.getValue());
             }
         }
