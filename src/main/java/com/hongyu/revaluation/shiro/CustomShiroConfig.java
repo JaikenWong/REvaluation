@@ -81,7 +81,9 @@ public class CustomShiroConfig {
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         Map<String, String> map = new HashMap<>();
         map.put("/**", "authc");
+        // 登录注册接口
         map.put("/public/ui/api/login", "anon");
+        map.put("/public/ui/api/user", "anon");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(map);
         shiroFilterFactoryBean.setLoginUrl("/public/ui/login");
         shiroFilterFactoryBean.setSuccessUrl("/public/ui/index");
