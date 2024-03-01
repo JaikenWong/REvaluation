@@ -107,11 +107,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
+        <!--commons-lang 工具库-->
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>4.0.1</version>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
         </dependency>
     </dependencies>
 

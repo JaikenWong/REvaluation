@@ -57,6 +57,7 @@ public class ShiroConfig {
         // 是否允许将 sessionId 放到 Url 地址拦中
         sessionManager.setSessionIdUrlRewritingEnabled(false);
         sessionManager.setSessionListeners(Collections.singleton(customSessionListener));
+        sessionManager.setSessionDAO(new CustomMemorySessionDAO());
         return sessionManager;
     }
 
