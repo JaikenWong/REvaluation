@@ -1,26 +1,24 @@
 package com.hongyu.revaluation.api;
 
-import java.util.concurrent.TimeUnit;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.jasypt.util.password.PasswordEncryptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.hongyu.revaluation.common.JwtUtil;
 import com.hongyu.revaluation.entity.response.Result;
 import com.hongyu.revaluation.entity.session.LoginQuery;
-import com.hongyu.revaluation.entity.user.User;
-import com.hongyu.revaluation.mapper.UserMapper;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,59 +30,38 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 public class LoginManagementApi {
 
-    @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
-    private PasswordEncryptor passwordEncryptor;
-
-    @Autowired
-    private RedisTemplate redisTemplate;
-
-    @Autowired
-    private HttpServletResponse response;
-
     @PostMapping("/public/ui/api/login")
     public ResponseEntity<Result> login(@Valid @RequestBody LoginQuery query) {
         log.info("dashboard login username {}", query.getUserName());
-        QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_name", query.getUserName());
-        User user = userMapper.selectOne(wrapper);
-        passwordEncryptor.checkPassword(String.valueOf(query.getPassword()), user.getPassword());
-        if (user == null) {
+        Subject currentUser = SecurityUtils.getSubject();
+        try {
+            currentUser.login(new UsernamePasswordToken(query.getUserName(), query.getPassword()));
+        } catch (UnknownAccountException uae) {
             return ResponseEntity.badRequest().body(Result.builder().code(1001).message("用户名密码错误").build());
+        } catch (AuthenticationException ae) {
+            return ResponseEntity.badRequest().body(Result.builder().code(1002).message("认证失败").build());
         }
-        setSessionCookie(user);
-        return ResponseEntity.ok().body(Result.builder().success(true).message("登录成功").build());
-    }
-
-    private void setSessionCookie(User user) {
-        // 生成会话ID
-        String token = JwtUtil.createToken(user);
-        Cookie cookie = new Cookie("re-token", token);
-        cookie.setMaxAge(30 * 60 * 60); // 30 min
-        cookie.setSecure(true);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        // add cookie to response
-        response.addCookie(cookie);
-        redisTemplate.opsForValue().set(token, user, 30, TimeUnit.MINUTES);
+        currentUser = SecurityUtils.getSubject();
+        Map<String, Object> token = new HashMap<>();
+        token.put("token", currentUser.getSession().getId());
+        return ResponseEntity.ok().body(Result.builder().data(token).success(true).message("登录成功").build());
     }
 
     @GetMapping("/public/ui/api/logout")
     public ResponseEntity<Result> logout(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("re-token")) {
-                User user = (User)redisTemplate.opsForValue().getAndDelete(cookie.getValue());
-                if (user != null) {
-                    log.warn("delete current token by user {}", user.getUserName());
-                } else {
-                    log.error("current token is invalid");
-                    return ResponseEntity.badRequest().body(Result.builder().success(false).message("会话非法").build());
-                }
-            }
-        }
+        Subject currentUser = SecurityUtils.getSubject();
+        currentUser.logout();
         return ResponseEntity.ok().body(Result.builder().success(true).message("登出成功").build());
+    }
+
+    @GetMapping("/public/ui/api/touch")
+    public ResponseEntity<Result> touch() {
+        Subject currentUser = SecurityUtils.getSubject();
+        currentUser.getSession().touch();
+        Serializable sessionId = currentUser.getSession().getId();
+        log.info("touch session Id {}", sessionId);
+        Map<String, Serializable> map = new HashMap<>();
+        map.put("touch-token", sessionId);
+        return ResponseEntity.ok().body(Result.builder().data(map).build());
     }
 }
