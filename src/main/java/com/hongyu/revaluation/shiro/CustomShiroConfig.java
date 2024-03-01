@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 2024-02-29 22:36
  **/
 @Configuration
-public class ShiroConfig {
+public class CustomShiroConfig {
 
 
     /**
