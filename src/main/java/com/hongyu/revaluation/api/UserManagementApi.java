@@ -40,7 +40,6 @@ public class UserManagementApi {
     @Autowired
     private PasswordEncryptor passwordEncryptor;
 
-    @RequiresAuthentication
     @PostMapping(path = "/public/ui/api/user", produces = "application/json")
     public ResponseEntity<Result> createUser(@Valid @RequestBody UserCreateInfo userInfo) throws Exception {
         log.info("create user for {}",userInfo.getUserName());
