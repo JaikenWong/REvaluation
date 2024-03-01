@@ -62,6 +62,6 @@ public class LoginManagementApi {
         log.info("touch session Id {}", sessionId);
         Map<String, Serializable> map = new HashMap<>();
         map.put("touch-token", sessionId);
-        return ResponseEntity.ok().body(Result.builder().data(map).build());
+        return ResponseEntity.ok().body(Result.builder().data(map).message("续期成功").build());
     }
 }

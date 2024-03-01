@@ -1,5 +1,7 @@
 package com.hongyu.revaluation.api;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -46,7 +48,9 @@ public class UserManagementApi {
         User user = User.builder().userName(userInfo.getUserName()).password(password)
             .createTime(System.currentTimeMillis()).build();
         userMapper.insert(user);
-        return ResponseEntity.ok(Result.builder().success(true).message("注册成功").build());
+        Map<String,Long> map = new HashMap<>();
+        map.put("userId",user.getId());
+        return ResponseEntity.ok(Result.builder().data(map).success(true).message("注册成功").build());
     }
 
 }
