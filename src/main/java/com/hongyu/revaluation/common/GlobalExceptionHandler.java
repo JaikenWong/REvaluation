@@ -30,6 +30,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadParamException.class)
     public ResponseEntity<Result> handle(BadParamException e) {
         log.error("Bad Param Error {}", e);
-        return ResponseEntity.status(500).body(Result.builder().message(e.getMessage()).build());
+        return ResponseEntity.status(400).body(Result.builder().message(e.getMessage()).build());
     }
 }
