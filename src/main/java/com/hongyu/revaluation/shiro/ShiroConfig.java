@@ -6,12 +6,10 @@ import java.util.Map;
 
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.SessionListener;
-import org.apache.shiro.session.mgt.eis.MemorySessionDAO;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,9 +45,9 @@ public class ShiroConfig {
     public DefaultWebSessionManager sessionManager(SessionListener customSessionListener) {
         DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
         // 会话超时时间，单位：毫秒
-        sessionManager.setGlobalSessionTimeout(1 * 60 * 1000);
+        sessionManager.setGlobalSessionTimeout(30 * 60 * 1000);
         // 定时清理失效会话, 清理用户直接关闭浏览器造成的孤立会话
-        sessionManager.setSessionValidationInterval(1 * 60 * 1000);
+        sessionManager.setSessionValidationInterval(10 * 60 * 1000);
         // 是否开启定时清理失效会话
         sessionManager.setSessionValidationSchedulerEnabled(true);
         // 指定sessionid
