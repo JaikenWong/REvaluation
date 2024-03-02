@@ -32,3 +32,4 @@ jasypt:
 session:
   timeout: 1800
   id-len: 64
+  store-prefix: re-session

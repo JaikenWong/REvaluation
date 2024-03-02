@@ -24,6 +24,9 @@ public class CustomRedisSessionDAO extends CachingSessionDAO {
     @Value("${session.id-len:32}")
     private int idLen;
 
+    @Value("${session.store-prefix}")
+    private String storePrefix;
+
     @Autowired
     @Qualifier("sessionRedisTemplate")
     private RedisTemplate<Serializable, Session> redisTemplate;
@@ -33,7 +36,7 @@ public class CustomRedisSessionDAO extends CachingSessionDAO {
         Serializable serializable = RandomStringUtils.randomAlphanumeric(idLen);
         assignSessionId(session, serializable);
         // 将sessionid作为Key，session作为value存入redis
-        redisTemplate.opsForValue().set(serializable, session);
+        redisTemplate.opsForValue().set(getStoreId(serializable), session);
         return serializable;
     }
 
@@ -43,16 +46,13 @@ public class CustomRedisSessionDAO extends CachingSessionDAO {
             return null;
         }
         // 从Redis中读取Session对象
-        Session session = redisTemplate.opsForValue().get(sessionId);
-        return session;
+        return redisTemplate.opsForValue().get(getStoreId(sessionId));
     }
 
     @Override
     protected void doUpdate(Session session) {
-        // 设置session有效期
-        session.setTimeout(sessionTimeout * 1000);
         // 将sessionid作为Key，session作为value存入redis，并设置有效期
-        redisTemplate.opsForValue().set(session.getId(), session, sessionTimeout, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(getStoreId(session.getId()), session, sessionTimeout, TimeUnit.SECONDS);
     }
 
     @Override
@@ -62,6 +62,10 @@ public class CustomRedisSessionDAO extends CachingSessionDAO {
             return;
         }
         // 从Redis中删除指定SessionId的k-v
-        redisTemplate.delete(session.getId());
+        redisTemplate.delete(getStoreId(session.getId()));
+    }
+
+    private Serializable getStoreId(Serializable id) {
+        return storePrefix + id;
     }
 }
