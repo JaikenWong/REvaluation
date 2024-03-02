@@ -12,6 +12,7 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -21,6 +22,7 @@ import com.hongyu.revaluation.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Component
 public class UserAuthorizingRealm extends AuthorizingRealm {
 
     @Autowired
