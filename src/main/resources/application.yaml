@@ -1,6 +1,13 @@
 server:
   port: 8080
 spring:
+#  session:
+#    redis:
+#      flush-mode: on_save
+#      namespace: shiro-test
+#      cleanup-cron: 0 * * * * *
+#      repository-type: indexed
+#    timeout: 1800
   data:
     redis:
       host: localhost
@@ -13,7 +20,7 @@ spring:
           max-active: 32
           min-idle: 8
   datasource:
-    url: jdbc:mysql://localhost:3306/revaluation?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://localhost:3306/revaluation?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
     password: ENC(/Og6E6bdRnRvxgq0+eiCSvEC0WEpbLolgaYloJXjgZwwkO34OdxWmjBqo5y8zUiE)
     driver-class-name: com.mysql.jdbc.Driver
@@ -22,3 +29,6 @@ jasypt:
     algorithm: PBEWITHHMACSHA512ANDAES_256
     iv-generator-classname: org.jasypt.iv.RandomIvGenerator
     password: RobustnessEvaluation
+session:
+  timeout: 1800
+  id-len: 64

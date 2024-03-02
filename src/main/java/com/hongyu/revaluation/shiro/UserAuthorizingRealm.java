@@ -12,7 +12,6 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -46,13 +45,10 @@ public class UserAuthorizingRealm extends AuthorizingRealm {
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.eq("user_name", username);
         User user = userMapper.selectOne(wrapper);
-        if (user == null) {
+        if (user == null || !passwordEncryptor.checkPassword(password, user.getPassword())) {
             throw new UnknownAccountException("找不到用户（" + username + "）的帐号信息");
         }
-        if (!passwordEncryptor.checkPassword(password, user.getPassword())) {
-            throw new UnknownAccountException("找不到用户（" + username + "）的帐号信息");
-        }
-
+        // 将userId 作为principal, 也可以将整个user 实体作为
         return new SimpleAuthenticationInfo(user, password, getName());
     }
 
