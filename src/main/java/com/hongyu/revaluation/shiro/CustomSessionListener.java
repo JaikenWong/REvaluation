@@ -1,7 +1,5 @@
 package com.hongyu.revaluation.shiro;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionListener;
 import org.springframework.stereotype.Component;

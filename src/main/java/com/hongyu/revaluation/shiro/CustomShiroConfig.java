@@ -66,7 +66,8 @@ public class CustomShiroConfig {
     }
 
     @Bean
-    public DefaultWebSecurityManager securityManager(Realm userAuthorizingRealm, DefaultWebSessionManager sessionManager) {
+    public DefaultWebSecurityManager securityManager(Realm userAuthorizingRealm,
+        DefaultWebSessionManager sessionManager) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(userAuthorizingRealm);
         // 换成由Spring Session + redis 管理

@@ -1,13 +1,6 @@
 server:
   port: 8080
 spring:
-#  session:
-#    redis:
-#      flush-mode: on_save
-#      namespace: shiro-test
-#      cleanup-cron: 0 * * * * *
-#      repository-type: indexed
-#    timeout: 1800
   data:
     redis:
       host: localhost
@@ -23,7 +16,16 @@ spring:
     url: jdbc:mysql://localhost:3306/revaluation?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
     password: ENC(/Og6E6bdRnRvxgq0+eiCSvEC0WEpbLolgaYloJXjgZwwkO34OdxWmjBqo5y8zUiE)
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-timeout: 30000
+      pool-name: DataHikariCP
+      minimum-idle: 5
+      idle-timeout: 1800000
+      maximum-pool-size: 10
+      auto-commit: true
+      max-lifetime: 1800000
+      connection-test-query: SELECT 1
 jasypt:
   encryptor:
     algorithm: PBEWITHHMACSHA512ANDAES_256
@@ -33,3 +35,10 @@ session:
   timeout: 1800
   id-len: 64
   store-prefix: re-session
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*Mapper.xml
+  type-aliases-package: com.hongyu.revaluation.entity
+
+logging:
+  level:
+    com.hongyu.revaluation.mapper: debug
