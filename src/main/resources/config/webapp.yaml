@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: re-webapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: re-webapp
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: re-webapp
+    spec:
+      containers:
+      - image: webapp:latest
+        imagePullPolicy: Never
+        name: re-webapp
+        ports:
+        - containerPort: 80
+--- 
+apiVersion: v1
+kind: Service
+metadata:
+  name: re-webapp
+  labels:
+    app: re-webapp
+    service: re-webapp
+spec:
+  ports:
+  - port: 80
+    name: http
+  selector:
+    app: re-webapp
+--- 
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: re-webapp
+spec:
+  hosts:
+  - re-webapp
+  http:
+  - route:
+    - destination:
+        host: re-webapp
+        subset: v1
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: re-webapp
+spec:
+  host: re-webapp
+  subsets:
+  - name: v1
+    labels:
+      version: v1
