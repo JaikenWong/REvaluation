@@ -1,0 +1,42 @@
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: exta-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: exta-service
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - exta-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /public/ui/
+    route:
+    - destination:
+        host: re-webserver
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: re-webapp
+        port:
+          number: 80

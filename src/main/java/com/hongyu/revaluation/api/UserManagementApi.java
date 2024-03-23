@@ -53,7 +53,7 @@ public class UserManagementApi {
         String password = passwordEncryptor.encryptPassword(userInfo.getPassword());
         // 密码加密后存储
         User user = User.builder().userName(userInfo.getUserName()).password(password)
-            .createTime(System.currentTimeMillis()).build();
+                .createTime(System.currentTimeMillis()).build();
         userMapper.insert(user);
         Map<String, Long> map = new HashMap<>();
         map.put("userId", user.getId());
