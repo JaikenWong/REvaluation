@@ -1,0 +1,44 @@
+server:
+  port: 8080
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: ENC(/Og6E6bdRnRvxgq0+eiCSvEC0WEpbLolgaYloJXjgZwwkO34OdxWmjBqo5y8zUiE)
+      database: 0
+      lettuce:
+        pool:
+          max-idle: 16
+          max-active: 32
+          min-idle: 8
+  datasource:
+    url: jdbc:mysql://localhost:3306/revaluation?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: ENC(/Og6E6bdRnRvxgq0+eiCSvEC0WEpbLolgaYloJXjgZwwkO34OdxWmjBqo5y8zUiE)
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-timeout: 30000
+      pool-name: DataHikariCP
+      minimum-idle: 5
+      idle-timeout: 1800000
+      maximum-pool-size: 10
+      auto-commit: true
+      max-lifetime: 1800000
+      connection-test-query: SELECT 1
+jasypt:
+  encryptor:
+    algorithm: PBEWITHHMACSHA512ANDAES_256
+    iv-generator-classname: org.jasypt.iv.RandomIvGenerator
+    password: RobustnessEvaluation
+session:
+  timeout: 1800
+  id-len: 64
+  store-prefix: re-session
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*Mapper.xml
+  type-aliases-package: com.hongyu.revaluation.entity
+
+logging:
+  level:
+    com.hongyu.revaluation.mapper: debug
