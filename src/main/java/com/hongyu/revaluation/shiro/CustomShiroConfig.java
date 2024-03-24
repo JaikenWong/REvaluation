@@ -86,8 +86,8 @@ public class CustomShiroConfig {
         map.put("/public/ui/api/login", "anon");
         map.put("/public/ui/api/user", "anon");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(map);
-        shiroFilterFactoryBean.setLoginUrl("/public/ui/login");
-        shiroFilterFactoryBean.setSuccessUrl("/public/ui/index");
+        shiroFilterFactoryBean.setLoginUrl("/login.html");
+        shiroFilterFactoryBean.setSuccessUrl("/index.html");
         return shiroFilterFactoryBean;
     }
 }
