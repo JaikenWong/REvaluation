@@ -1,4 +1,6 @@
 -- revaluation.`user` definition
+CREATE DATABASE revaluation;
+USE revaluation;
 
 CREATE TABLE `user`
 (

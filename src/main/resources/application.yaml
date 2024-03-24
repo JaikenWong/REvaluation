@@ -3,7 +3,7 @@ server:
 spring:
   data:
     redis:
-      host: localhost
+      host: redis.re.svc.cluster.local
       port: 6379
       password: ENC(/Og6E6bdRnRvxgq0+eiCSvEC0WEpbLolgaYloJXjgZwwkO34OdxWmjBqo5y8zUiE)
       database: 0
@@ -13,7 +13,7 @@ spring:
           max-active: 32
           min-idle: 8
   datasource:
-    url: jdbc:mysql://localhost:3306/revaluation?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://mysqldb.re.svc.cluster.local:3306/revaluation?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
     password: ENC(/Og6E6bdRnRvxgq0+eiCSvEC0WEpbLolgaYloJXjgZwwkO34OdxWmjBqo5y8zUiE)
     driver-class-name: com.mysql.cj.jdbc.Driver
