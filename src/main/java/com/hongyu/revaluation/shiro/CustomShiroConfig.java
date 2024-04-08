@@ -84,6 +84,8 @@ public class CustomShiroConfig {
         map.put("/**", "authc");
         // 登录注册接口
         map.put("/public/ui/api/login", "anon");
+        // map.put("/swagger-ui/index.html", "anon");
+        // map.put("/v3/api-docs", "anon");
         map.put("/public/ui/api/user", "anon");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(map);
         shiroFilterFactoryBean.setLoginUrl("/login.html");

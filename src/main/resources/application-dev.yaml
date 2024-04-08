@@ -1,5 +1,8 @@
 server:
   port: 8080
+springdoc:
+  # 扫描的包列表 默认: *
+  packages-to-scan: com.hongyu
 spring:
   data:
     redis:
